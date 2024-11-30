@@ -27,7 +27,8 @@ class Product(models.Model):
     title = models.CharField(max_length=100,verbose_name='عنوان')
     category = models.ManyToManyField(ProductCategory,verbose_name='دسته بندی ها',
                                  related_name='products', blank=True)
-    brand =  models.ForeignKey(ProductBrand,on_delete=models.CASCADE,verbose_name='برند',null=True, blank=True)
+    image = models.ImageField(upload_to='images/products',null=True,blank=True,verbose_name='تصویر محصول')
+    brand = models.ForeignKey(ProductBrand,on_delete=models.CASCADE,verbose_name='برند',null=True, blank=True)
     price = models.IntegerField(verbose_name='قیمت')
     short_description = models.CharField(max_length=500,null=True,verbose_name='توضیحات کوتاه',db_index=True)
     description = models.TextField(verbose_name='توضیحات اصلی',db_index=True)
