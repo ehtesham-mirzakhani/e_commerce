@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     #internal module
+    'site_module',
     'account_module',
     'products',
     'home_module',

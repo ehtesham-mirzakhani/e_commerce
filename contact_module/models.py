@@ -14,3 +14,4 @@ class ContactUs(models.Model):
         verbose_name_plural='لیست تماس با ما'
     def __str__(self):
         return self.title
+

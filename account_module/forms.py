@@ -21,7 +21,7 @@ class RegistrationForm(forms.Form):
         password = self.cleaned_data.get('password')
         confirm_password = self.cleaned_data.get('confirm_password')
         if password != confirm_password:
-            raise forms.ValidationError('Passwords must match')
+            raise forms.ValidationError('پسورد باید یکی باشد')
         return confirm_password
 
 class LoginForm(forms.Form):
@@ -29,3 +29,13 @@ class LoginForm(forms.Form):
                              validators=[validators.MaxLengthValidator(100), validators.EmailValidator])
     password = forms.CharField(label=' کلمه عبور',widget=forms.PasswordInput(attrs={'placeholder': 'Password'}),
                                validators=[validators.MaxLengthValidator(100)])
+
+class ForgotPasswordForm(forms.Form):
+    email = forms.EmailField(label='ایمیل',widget=forms.EmailInput(attrs={'placeholder': 'Email'}),
+                             validators=[validators.MaxLengthValidator(100), validators.EmailValidator])
+
+class ResetPasswordForm(forms.Form):
+    password = forms.CharField(label=' کلمه عبور',widget=forms.PasswordInput(attrs={'placeholder': 'Password'}),
+                               validators=[validators.MaxLengthValidator(100)])
+    confirm_password = forms.CharField(label='تکرار کلمه عبور', widget=forms.PasswordInput,
+                                       validators=[validators.MaxLengthValidator(100)])

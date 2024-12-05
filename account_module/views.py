@@ -1,11 +1,11 @@
 from datetime import datetime, timedelta
 
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.http import Http404
 from django.shortcuts import render, redirect
 from django.views import View
-from  django.urls import reverse
-from account_module.forms import RegistrationForm, LoginForm
+from django.urls import reverse
+from account_module.forms import RegistrationForm, LoginForm,ForgotPasswordForm,ResetPasswordForm
 from account_module.models import User
 from django.utils.crypto import get_random_string
 from utils.email_service import send_email
@@ -35,11 +35,11 @@ class registerView(View):
                 new_user = User.objects.create_user(
                     username=register_form.cleaned_data.get('username'),
                     email=user_email,
-                    password=password,
                     phone=user_phone,
                     active_code = get_random_string(72),
                     is_active=False,
                 )
+                new_user.set_password(password)
                 request.session['user_id']= new_user.id
                 new_user.save()
                 send_email('فعال سازی حساب کاربری', new_user.email, {'user': new_user},
@@ -98,7 +98,7 @@ class LoginView(View):
                     is_password_correct = user.check_password(login_form.cleaned_data.get('password'))
                     if is_password_correct:
                         login(request, user)
-                        return redirect(reverse('register_page'))
+                        return redirect(reverse('home_page'))
                     else:
                         login_form.add_error('email', 'کاربر یافت نشد')
             else:
@@ -108,3 +108,46 @@ class LoginView(View):
             'login_form': login_form
         }
         return render(request, 'account_module/login.html', context)
+
+class ForgetPasswordView(View):
+    def get(self, request):
+        forget_pass_form = ForgotPasswordForm()
+        context = {'forget_pass_form': forget_pass_form}
+        return render(request,'account_module/forgot_password.html',context)
+    def post(self, request):
+        forget_pass_form = ForgotPasswordForm(request.POST)
+        if forget_pass_form.is_valid():
+            user_email = forget_pass_form.cleaned_data.get('email')
+            user = User.objects.filter(email__iexact=user_email).first()
+            if user is not None:
+                send_email('تغییر کلمه عبور', user.email, {'user': user},
+                           'emails/forgot_password.html')
+        context = {'forget_pass_form': forget_pass_form}
+        return render(request, 'account_module/forgot_password.html', context)
+
+class ResetPasswordView(View):
+    def get(self, request,active_code):
+        user = User.objects.filter(active_code__iexact=active_code).first()
+        if user is None:
+            return redirect('login_page')
+        reset_pass_form = ResetPasswordForm()
+        context = {'reset_pass_form':reset_pass_form,'user':user}
+        return render(request,'account_module/reset_password.html',context)
+    def post(self,request,active_code):
+        reset_pass_form = ResetPasswordForm(request.POST)
+        user = User.objects.filter(active_code__iexact=active_code).first()
+        if reset_pass_form.is_valid():
+            if user is None:
+                return redirect('login_page')
+            user.set_password(reset_pass_form.cleaned_data.get('password'))
+            user.email_active_code = get_random_string(72)
+            user.is_active = True
+            user.save()
+            return redirect('login_page')
+        context = {'reset_pass_form':reset_pass_form,'user':user}
+        return render(request,'account_module/reset_password.html',context)
+
+class LogoutView(View):
+    def get(self, request):
+        logout(request)
+        return redirect('login_page')

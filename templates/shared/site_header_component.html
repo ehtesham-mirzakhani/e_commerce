@@ -40,17 +40,23 @@
 					
 					<div class="col-sm-4" style="text-align: left;">
 						<div class="logo">
-							<a href="index.html"><img src="/static/images/home/logo.png" alt="Logo" style="text-align: center;" /></a>
+							<a href="index.html"><img src="{{ site_setting.site_logo.url }}" alt="Logo" style="text-align: center;" /></a>
 						</div>
 					</div>
 					
 					<div class="col-sm-8 header-middle-menu">
 						<div class="shop-menu pull-right">
 							<ul class="nav navbar-nav">
-								<li><a href="{% url 'register_page' %}"><i class="fa fa-user"></i> حساب کاربـری</a></li>
-								<li><a href="#"><i class="fa fa-star"></i> لیست علاقه مندی ها</a></li>
-								<li><a href="login.html"><i class="fa fa-lock"></i> ورود</a></li>
-								<li><a href="cart.html"><i class="fa fa-shopping-cart"></i> سبد خریـد</a></li>
+                                {% if user.is_authenticated %}
+                                    {% if user.is_superuser %}
+                                    	<li><a href="/admin"><i class="fa fa-user"></i> پنل ادمین </a></li>
+                                    {% endif %} 
+                                <li><a href="{% url 'logout_page' %}"><i class="fa fa-shopping-cart"></i> سبد خرید </a></li>
+                                <li><a href="{% url 'logout_page' %}"><i class="fa fa-sign-out"></i> خروج </a></li>
+                                {% else %}
+                                <li><a href="{% url 'register_page' %}"><i class="fa fa-sign-in"></i> ثبت نام </a></li>    
+                                <li><a href="{% url 'login_page' %}"><i class="fa fa-sign-in"></i> ورود </a></li>
+                                {% endif %}
 							</ul>
 						</div>
 					</div>
@@ -82,7 +88,7 @@
 								<li><a href="{% url 'home_page' %}" class="active">خـانه</a></li>
 								<li class="dropdown"><a href="#">فروشگـاه<i class="fa fa-angle-down"></i></a>
                                     <ul role="menu" class="sub-menu">
-                                        <li><a href="shop.html">محصولات</a></li>
+                                        <li><a href="{% url 'product-list' %}">محصولات</a></li>
 										<li><a href="product-details.html">جزئیات محصولات</a></li> 
 										<li><a href="checkout.html">پرداخت</a></li> 
 										<li><a href="cart.html">سبـد خریـد</a></li> 
