@@ -39,12 +39,16 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     #internal module
     'site_module',
+    'article_module',
     'account_module',
     'products',
     'home_module',
     'contact_module',
+    'user_panel_module',
+    'order_module',
     #external module
     'django_render_partial',
+    'sorl.thumbnail',
 ]
 
 MIDDLEWARE = [
@@ -83,6 +87,7 @@ WSGI_APPLICATION = 'e_commerce.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 AUTH_USER_MODEL = 'account_module.User'
+LOGIN_URL = '/login'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
