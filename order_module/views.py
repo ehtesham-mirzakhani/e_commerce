@@ -3,7 +3,6 @@ from datetime import time
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.urls import reverse
-
 from order_module.models import Order, OrderDetail
 from products.models import Product
 from django.http import HttpRequest, JsonResponse, HttpResponse
@@ -108,7 +107,6 @@ def verify_payment(request: HttpRequest):
         else:
             e_code = req.json()['errors']['code']
             e_message = req.json()['errors']['message']
-            # return HttpResponse(f"Error code: {e_code}, Error Message: {e_message}")
             return render(request, 'order_module/payment_result.html',
                           {'erorr': e_message })
     else:
